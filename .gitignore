@@ -4,6 +4,33 @@ queue/
 composer.lock
 *.log
 .env
+
+# Large binary files
+*.bin
+captured_signals.bin
+raw_samples_*.bin
+
+# Database files
+db/
+*.db
+*.sqlite
+
+# Virtual environment
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Node modules
+node_modules/
+
+# IDE files
+.idea/
+.vscode/
+.kilocode/
+.codebuddy/
+
+# AI assistant rules
 .clinerules/byterover-rules.md
 .kilocode/rules/byterover-rules.md
 .roo/rules/byterover-rules.md
@@ -12,3 +39,8 @@ composer.lock
 .kiro/steering/byterover-rules.md
 .qoder/rules/byterover-rules.md
 .augment/rules/byterover-rules.md
+
+# Temporary files
+*.tmp
+*.temp
+token.txt
