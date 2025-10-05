@@ -1,0 +1,22 @@
+{
+    "name": "globalcomm/telecom-service",
+    "description": "PSTN/SS7 Telecommunications Service",
+    "require": {
+        "php": ">=7.4",
+        "mongodb/mongodb": "^1.12",
+        "ext-sockets": "*",
+        "ext-json": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Telecom\\": "api/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit test_api.php",
+        "worker": "php queue_worker.php"
+    }
+}

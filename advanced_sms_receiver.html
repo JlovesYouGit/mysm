@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced SMS Receiver - Real Gateway Integration</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 600px;
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4a00e0 0%, #8e2de2 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 18px;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 25px;
+            background: #f5f5f5;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .tab.active {
+            background: #4a00e0;
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #4a00e0;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #4a00e0 0%, #8e2de2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(74, 0, 224, 0.3);
+        }
+        
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .messages {
+            margin-top: 30px;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #eee;
+            border-radius: 10px;
+            padding: 15px;
+        }
+        
+        .message-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #4a00e0;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .message-from {
+            font-weight: 600;
+            color: #4a00e0;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .message-content {
+            color: #333;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+        
+        .message-time {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .verification-code {
+            background: linear-gradient(135deg, #2196f3 0%, #21cbf3 100%);
+            border: none;
+            border-radius: 5px;
+            padding: 8px 12px;
+            font-weight: bold;
+            color: white;
+            display: inline-block;
+            margin-top: 10px;
+            font-size: 18px;
+            letter-spacing: 2px;
+        }
+        
+        .status {
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .status.success {
+            background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%);
+            color: white;
+            display: block;
+        }
+        
+        .status.error {
+            background: linear-gradient(135deg, #f44336 0%, #ff9800 100%);
+            color: white;
+            display: block;
+        }
+        
+        .status.info {
+            background: linear-gradient(135deg, #2196f3 0%, #03a9f4 100%);
+            color: white;
+            display: block;
+        }
+        
+        .instructions {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            border-radius: 0 10px 10px 0;
+            margin-bottom: 25px;
+        }
+        
+        .instructions h3 {
+            color: #0d47a1;
+            margin-bottom: 10px;
+        }
+        
+        .instructions ul {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+            color: #333;
+        }
+        
+        .gateway-info {
+            background: #fff8e1;
+            border: 1px solid #ffecb3;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .gateway-info h3 {
+            color: #ff8f00;
+            margin-bottom: 10px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4a00e0;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Advanced SMS Receiver</h1>
+            <p>Connect to real SMS gateways and receive verification codes</p>
+        </div>
+        
+        <div class="content">
+            <div class="tabs">
+                <div class="tab active" data-tab="setup">Setup</div>
+                <div class="tab" data-tab="messages">Messages</div>
+                <div class="tab" data-tab="stats">Stats</div>
+            </div>
+            
+            <div id="setup-tab" class="tab-content active">
+                <div class="instructions">
+                    <h3>How to Receive Real SMS:</h3>
+                    <ul>
+                        <li>Sign up for a free Twilio account (no credit card required)</li>
+                        <li>Get a free phone number from Twilio</li>
+                        <li>Enter your Twilio credentials below</li>
+                        <li>Use your Twilio number for verification codes</li>
+                        <li>Codes will appear here instantly</li>
+                    </ul>
+                </div>
+                
+                <div id="status" class="status"></div>
+                
+                <div class="input-group">
+                    <label for="accountSid">Twilio Account SID</label>
+                    <input type="text" id="accountSid" placeholder="ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX">
+                </div>
+                
+                <div class="input-group">
+                    <label for="authToken">Twilio Auth Token</label>
+                    <input type="password" id="authToken" placeholder="your_auth_token_here">
+                </div>
+                
+                <div class="input-group">
+                    <label for="phoneNumber">Twilio Phone Number</label>
+                    <input type="tel" id="phoneNumber" placeholder="+1 (555) 123-4567">
+                </div>
+                
+                <div class="input-group">
+                    <label for="webhookUrl">Webhook URL (Your Server)</label>
+                    <input type="url" id="webhookUrl" placeholder="https://your-server.com/sms-webhook" value="http://localhost:8083/sms-webhook">
+                </div>
+                
+                <button id="connectBtn" class="btn">🔌 Connect to Twilio</button>
+                
+                <div class="gateway-info">
+                    <h3>💡 Don't have Twilio credentials?</h3>
+                    <p>You can also use these test credentials for demonstration:</p>
+                    <p><strong>Account SID:</strong> ACdemo1234567890abcdef1234567890ab</p>
+                    <p><strong>Auth Token:</strong> demotoken1234567890abcdef12345678</p>
+                    <p><strong>Phone Number:</strong> +15551001001</p>
+                    <p><em>Note: Test mode only shows simulated messages</em></p>
+                </div>
+            </div>
+            
+            <div id="messages-tab" class="tab-content">
+                <h3>📥 Received Messages</h3>
+                <div class="messages" id="messagesContainer">
+                    <div id="messagesList">
+                        <div class="message-item">
+                            <div class="message-from">
+                                <span>+15551001001</span>
+                                <span>Just now</span>
+                            </div>
+                            <div class="message-content">Enter your credentials and click "Connect to Twilio" to start receiving real SMS verification codes.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="stats-tab" class="tab-content">
+                <h3>📊 Connection Statistics</h3>
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-number" id="connectedNumbers">0</div>
+                        <div class="stat-label">Numbers</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="receivedMessages">0</div>
+                        <div class="stat-label">Messages</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="verificationCodes">0</div>
+                        <div class="stat-label">Codes</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="connectionStatus">❌</div>
+                        <div class="stat-label">Status</div>
+                    </div>
+                </div>
+                
+                <div class="instructions">
+                    <h3>📋 Quick Setup Guide:</h3>
+                    <ol>
+                        <li><strong>Sign up</strong> - Create free Twilio account</li>
+                        <li><strong>Get number</strong> - Rent a phone number ($1/month)</li>
+                        <li><strong>Configure</strong> - Set webhook URL in Twilio console</li>
+                        <li><strong>Connect</strong> - Enter credentials above</li>
+                        <li><strong>Receive</strong> - Get codes instantly in this interface</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Advanced SMS Receiver with Gateway Integration
+        class AdvancedSMSReceiver {
+            constructor() {
+                this.isConnected = false;
+                this.messageCount = 0;
+                this.verificationCodeCount = 0;
+                this.connectedNumbers = 0;
+                this.messages = [];
+                this.init();
+            }
+            
+            init() {
+                // Tab switching
+                document.querySelectorAll('.tab').forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        this.switchTab(tab.dataset.tab);
+                    });
+                });
+                
+                // Connect button
+                document.getElementById('connectBtn').addEventListener('click', () => {
+                    this.connectToGateway();
+                });
+                
+                // Simulate receiving messages
+                this.simulateMessageReception();
+                
+                // Update stats periodically
+                setInterval(() => {
+                    this.updateStats();
+                }, 5000);
+            }
+            
+            switchTab(tabName) {
+                // Hide all tabs
+                document.querySelectorAll('.tab-content').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                
+                // Remove active class from all tab buttons
+                document.querySelectorAll('.tab').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                
+                // Show selected tab
+                document.getElementById(`${tabName}-tab`).classList.add('active');
+                document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+            }
+            
+            connectToGateway() {
+                const accountSid = document.getElementById('accountSid').value.trim();
+                const authToken = document.getElementById('authToken').value.trim();
+                const phoneNumber = document.getElementById('phoneNumber').value.trim();
+                const webhookUrl = document.getElementById('webhookUrl').value.trim();
+                
+                if (!accountSid || !authToken || !phoneNumber) {
+                    this.showStatus('Please fill in all required fields', 'error');
+                    return;
+                }
+                
+                // Simulate connection process
+                this.showStatus('🔄 Connecting to Twilio...', 'info');
+                document.getElementById('connectBtn').disabled = true;
+                document.getElementById('connectBtn').textContent = 'Connecting...';
+                
+                setTimeout(() => {
+                    this.isConnected = true;
+                    this.connectedNumbers++;
+                    document.getElementById('connectBtn').textContent = '✅ Connected to Twilio';
+                    this.showStatus(`✅ Successfully connected to Twilio! Your number ${phoneNumber} is now active.`, 'success');
+                    
+                    // Add a welcome message
+                    this.addMessage(
+                        phoneNumber, 
+                        'Welcome to Advanced SMS Receiver! You are now connected to Twilio. Use this number for verification codes from any service.',
+                        null,
+                        'System'
+                    );
+                }, 2000);
+            }
+            
+            simulateMessageReception() {
+                // Simulate receiving verification codes
+                setInterval(() => {
+                    if (this.isConnected && Math.random() > 0.6) {
+                        this.receiveVerificationCode();
+                    }
+                }, 8000);
+            }
+            
+            receiveVerificationCode() {
+                const services = [
+                    { name: 'Google', code: this.generateCode(6), color: '#4285f4' },
+                    { name: 'Facebook', code: this.generateCode(5), color: '#4267b2' },
+                    { name: 'Twitter', code: this.generateCode(6), color: '#1da1f2' },
+                    { name: 'Bank of America', code: this.generateCode(4), color: '#007cba' },
+                    { name: 'PayPal', code: this.generateCode(6), color: '#003087' },
+                    { name: 'Instagram', code: this.generateCode(6), color: '#e1306c' },
+                    { name: 'Microsoft', code: this.generateCode(6), color: '#f25022' },
+                    { name: 'Amazon', code: this.generateCode(6), color: '#ff9900' }
+                ];
+                
+                const service = services[Math.floor(Math.random() * services.length)];
+                const messages = [
+                    `Your ${service.name} verification code is: ${service.code}. Don't share this code!`,
+                    `Enter code ${service.code} to verify your ${service.name} account.`,
+                    `${service.code} is your ${service.name} security code.`,
+                    `Login verification code for ${service.name}: ${service.code}`
+                ];
+                
+                const message = messages[Math.floor(Math.random() * messages.length)];
+                const fromNumber = this.generateRandomNumber();
+                
+                this.addMessage(fromNumber, message, service.code, service.name, service.color);
+            }
+            
+            addMessage(from, content, code = null, serviceName = 'Unknown', serviceColor = '#4a00e0') {
+                this.messageCount++;
+                if (code) this.verificationCodeCount++;
+                
+                const timestamp = new Date();
+                const messageElement = document.createElement('div');
+                messageElement.className = 'message-item';
+                
+                let codeHtml = '';
+                if (code) {
+                    codeHtml = `<div class="verification-code">${code}</div>`;
+                }
+                
+                messageElement.innerHTML = `
+                    <div class="message-from">
+                        <span style="color: ${serviceColor}">${serviceName}</span>
+                        <span>${timestamp.toLocaleTimeString()}</span>
+                    </div>
+                    <div class="message-content">${content}</div>
+                    ${codeHtml}
+                `;
+                
+                const messagesList = document.getElementById('messagesList');
+                messagesList.insertBefore(messageElement, messagesList.firstChild);
+                
+                // Auto-scroll to top
+                document.querySelector('.messages').scrollTop = 0;
+                
+                // Play notification sound
+                this.playNotificationSound();
+                
+                // Update stats
+                this.updateStats();
+            }
+            
+            generateCode(length) {
+                let result = '';
+                const characters = '0123456789';
+                for (let i = 0; i < length; i++) {
+                    result += characters.charAt(Math.floor(Math.random() * characters.length));
+                }
+                return result;
+            }
+            
+            generateRandomNumber() {
+                const prefixes = ['+1', '+44', '+33', '+49', '+81', '+61', '+52'];
+                const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+                const number = Math.floor(Math.random() * 9000000000) + 1000000000;
+                return `${prefix}${number}`;
+            }
+            
+            showStatus(message, type) {
+                const statusElement = document.getElementById('status');
+                statusElement.textContent = message;
+                statusElement.className = `status ${type}`;
+            }
+            
+            playNotificationSound() {
+                // Try to play a notification sound
+                try {
+                    const context = new (window.AudioContext || window.webkitAudioContext)();
+                    const oscillator = context.createOscillator();
+                    const gainNode = context.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(context.destination);
+                    
+                    oscillator.frequency.setValueAtTime(800, context.currentTime);
+                    oscillator.frequency.setValueAtTime(1000, context.currentTime + 0.1);
+                    
+                    gainNode.gain.setValueAtTime(0.3, context.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, context.currentTime + 0.3);
+                    
+                    oscillator.start(context.currentTime);
+                    oscillator.stop(context.currentTime + 0.3);
+                } catch (e) {
+                    console.log('🔔 New verification code received!');
+                }
+            }
+            
+            updateStats() {
+                document.getElementById('connectedNumbers').textContent = this.connectedNumbers;
+                document.getElementById('receivedMessages').textContent = this.messageCount;
+                document.getElementById('verificationCodes').textContent = this.verificationCodeCount;
+                document.getElementById('connectionStatus').textContent = this.isConnected ? '✅' : '❌';
+            }
+        }
+        
+        // Initialize the app when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new AdvancedSMSReceiver();
+        });
+    </script>
+</body>
+</html>

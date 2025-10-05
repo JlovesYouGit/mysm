@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Spectrum API</title>
+</head>
+<body>
+    <h1>Direct API Test</h1>
+    <button onclick="testLogin()">1. Login</button>
+    <button onclick="testSpectrum()">2. Spectrum Scan</button>
+    <button onclick="testGetNumbers()">3. Get Available Numbers</button>
+    <button onclick="testAssignNumber()">4. Assign Number</button>
+    <div id="output" style="margin-top: 20px; white-space: pre-wrap; font-family: monospace;"></div>
+
+    <script>
+        let token = '';
+        const API_URL = 'http://localhost:8084';
+
+        function log(msg) {
+            document.getElementById('output').innerHTML += msg + '\n\n';
+        }
+
+        async function testLogin() {
+            try {
+                const response = await fetch(`${API_URL}/api/auth/login`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({username: 'admin', password: 'telecom2025'})
+                });
+                const data = await response.json();
+                token = data.token;
+                log('✅ Login successful: ' + token.substring(0, 20) + '...');
+            } catch (e) {
+                log('❌ Login failed: ' + e.message);
+            }
+        }
+
+        async function testSpectrum() {
+            try {
+                const response = await fetch(`${API_URL}/api/spectrum/scan`, {
+                    method: 'POST',
+                    headers: {'Authorization': `Bearer ${token}`}
+                });
+                const data = await response.json();
+                log('✅ Spectrum scan: ' + JSON.stringify(data, null, 2));
+            } catch (e) {
+                log('❌ Spectrum scan failed: ' + e.message);
+            }
+        }
+
+        async function testGetNumbers() {
+            try {
+                const response = await fetch(`${API_URL}/api/numbers/available`, {
+                    headers: {'Authorization': `Bearer ${token}`}
+                });
+                const data = await response.json();
+                log('✅ Available numbers: ' + data.numbers.length + ' found');
+                log('First 3: ' + data.numbers.slice(0,3).map(n => n.number).join(', '));
+            } catch (e) {
+                log('❌ Get numbers failed: ' + e.message);
+            }
+        }
+
+        async function testAssignNumber() {
+            try {
+                const response = await fetch(`${API_URL}/api/numbers/available`, {
+                    headers: {'Authorization': `Bearer ${token}`}
+                });
+                const data = await response.json();
+                const firstNumber = data.numbers[0].number;
+                
+                const assignResponse = await fetch(`${API_URL}/api/numbers/assign`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({number: firstNumber})
+                });
+                const assignData = await assignResponse.json();
+                log('✅ Assigned number: ' + JSON.stringify(assignData, null, 2));
+            } catch (e) {
+                log('❌ Assign number failed: ' + e.message);
+            }
+        }
+    </script>
+</body>
+</html>

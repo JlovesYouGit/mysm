@@ -1,0 +1,37 @@
+TELECOM SERVICE - QUICK START
+========================================
+
+STEP 1: Install Prerequisites
+------------------------------
+Run: install.bat
+
+This will check for:
+- PHP 7.4+
+- Composer
+- MongoDB
+
+If missing, follow on-screen instructions.
+
+
+STEP 2: Start Services
+------------------------------
+Terminal 1: start_server.bat
+Terminal 2: start_worker.bat
+
+
+STEP 3: Test API
+------------------------------
+Run: test_api.bat
+
+Or manually:
+http://localhost:8080
+
+
+TROUBLESHOOTING
+------------------------------
+- PHP not found: Install from https://windows.php.net/download/
+- Composer not found: Install from https://getcomposer.org/
+- MongoDB not running: Run "net start MongoDB" as Admin
+- Port 80 in use: Server uses port 8080 by default
+
+See WINDOWS_SETUP.md for detailed instructions.

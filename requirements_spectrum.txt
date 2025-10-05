@@ -1,0 +1,4 @@
+requests>=2.28.0
+numpy>=1.21.0
+pyrtlsdr>=0.2.9
+folium>=0.12.0

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Telecom Control Panel</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; }
+        input, textarea, button { margin: 5px; padding: 8px; }
+        button { background: #007cba; color: white; border: none; cursor: pointer; }
+        .response { background: #f5f5f5; padding: 10px; margin: 10px 0; }
+        .error { color: red; }
+        .success { color: green; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Telecom Service Control Panel</h1>
+        
+        <div class="section">
+            <h3>Login</h3>
+            <input type="text" id="username" placeholder="Username" value="admin">
+            <input type="password" id="password" placeholder="Password" value="telecom2025">
+            <button onclick="login()">Login</button>
+            <div id="loginResult" class="response"></div>
+        </div>
+
+        <div class="section">
+            <h3>Send SMS</h3>
+            <input type="text" id="smsTo" placeholder="To (+1234567890)">
+            <input type="text" id="smsFrom" placeholder="From (+0987654321)">
+            <textarea id="smsMessage" placeholder="Message"></textarea>
+            <button onclick="sendSMS()">Send SMS</button>
+            <div id="smsResult" class="response"></div>
+        </div>
+
+        <div class="section">
+            <h3>Make Call</h3>
+            <input type="text" id="callTo" placeholder="To (+1234567890)">
+            <input type="text" id="callFrom" placeholder="From (+0987654321)">
+            <button onclick="makeCall()">Make Call</button>
+            <div id="callResult" class="response"></div>
+        </div>
+
+        <div class="section">
+            <h3>View Messages</h3>
+            <button onclick="getMessages()">Get SMS Messages</button>
+            <button onclick="getCalls()">Get Call Records</button>
+            <div id="messagesResult" class="response"></div>
+        </div>
+
+        <div class="section">
+            <h3>Real-time Events</h3>
+            <button onclick="connectWebSocket()">Connect WebSocket</button>
+            <button onclick="disconnectWebSocket()">Disconnect</button>
+            <div id="wsStatus" class="response"></div>
+            <div id="wsEvents" class="response"></div>
+        </div>
+    </div>
+
+    <script>
+        let token = '';
+        let ws = null;
+
+        async function login() {
+            console.log('LOGIN CLICKED');
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            console.log('Login attempt:', username, password);
+            
+            try {
+                console.log('Sending login request to /api/auth/login');
+                const response = await fetch('http://localhost:8081/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                console.log('Login response status:', response.status);
+                
+                const data = await response.json();
+                console.log('Login response data:', data);
+                if (data.token) {
+                    token = data.token;
+                    document.getElementById('loginResult').innerHTML = '<span class="success">Login successful!</span>';
+                } else {
+                    document.getElementById('loginResult').innerHTML = '<span class="error">Login failed</span>';
+                }
+            } catch (error) {
+                console.error('LOGIN ERROR:', error);
+                document.getElementById('loginResult').innerHTML = '<span class="error">Error: ' + error.message + '</span>';
+            }
+        }
+
+        async function sendSMS() {
+            console.log('SEND SMS CLICKED');
+            if (!token) { alert('Please login first'); return; }
+            
+            const to = document.getElementById('smsTo').value;
+            const from_ = document.getElementById('smsFrom').value;
+            const message = document.getElementById('smsMessage').value;
+            console.log('SMS data:', {to, from_, message});
+            
+            try {
+                console.log('Sending SMS request to /api/sms/send');
+                const response = await fetch('http://localhost:8081/api/sms/send', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: JSON.stringify({ to, from_, message })
+                });
+                console.log('SMS response status:', response.status);
+                
+                const data = await response.json();
+                document.getElementById('smsResult').innerHTML = '<span class="success">SMS sent: ' + JSON.stringify(data) + '</span>';
+            } catch (error) {
+                console.error('SMS ERROR:', error);
+                document.getElementById('smsResult').innerHTML = '<span class="error">Error: ' + error.message + '</span>';
+            }
+        }
+
+        async function makeCall() {
+            if (!token) { alert('Please login first'); return; }
+            
+            const to = document.getElementById('callTo').value;
+            const from_ = document.getElementById('callFrom').value;
+            
+            try {
+                const response = await fetch('http://localhost:8081/api/voice/call', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: JSON.stringify({ to, from_ })
+                });
+                
+                const data = await response.json();
+                document.getElementById('callResult').innerHTML = '<span class="success">Call initiated: ' + JSON.stringify(data) + '</span>';
+            } catch (error) {
+                document.getElementById('callResult').innerHTML = '<span class="error">Error: ' + error.message + '</span>';
+            }
+        }
+
+        async function getMessages() {
+            if (!token) { alert('Please login first'); return; }
+            
+            try {
+                const response = await fetch('http://localhost:8081/api/sms/receive', {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+                
+                const data = await response.json();
+                document.getElementById('messagesResult').innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            } catch (error) {
+                document.getElementById('messagesResult').innerHTML = '<span class="error">Error: ' + error.message + '</span>';
+            }
+        }
+
+        async function getCalls() {
+            if (!token) { alert('Please login first'); return; }
+            
+            try {
+                const response = await fetch('http://localhost:8081/api/voice/receive', {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+                
+                const data = await response.json();
+                document.getElementById('messagesResult').innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            } catch (error) {
+                document.getElementById('messagesResult').innerHTML = '<span class="error">Error: ' + error.message + '</span>';
+            }
+        }
+
+        function connectWebSocket() {
+            ws = new WebSocket('ws://localhost:8081/ws/events');
+            
+            ws.onopen = function() {
+                document.getElementById('wsStatus').innerHTML = '<span class="success">WebSocket connected</span>';
+            };
+            
+            ws.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                document.getElementById('wsEvents').innerHTML += '<div>' + new Date().toLocaleTimeString() + ': ' + JSON.stringify(data) + '</div>';
+            };
+            
+            ws.onclose = function() {
+                document.getElementById('wsStatus').innerHTML = '<span class="error">WebSocket disconnected</span>';
+            };
+        }
+
+        function disconnectWebSocket() {
+            if (ws) {
+                ws.close();
+                ws = null;
+            }
+        }
+    </script>
+</body>
+</html>

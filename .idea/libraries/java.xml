@@ -1,0 +1,19 @@
+<component name="libraryTable">
+  <library name="java">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/openss7/src/java/mscontrol.jar!/" />
+      <root url="jar://$PROJECT_DIR$/openss7/src/java/jcc-1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/openss7/src/java/JainInapApi1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/openss7/src/java/JainTcapApiv1_1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/openss7/src/java/jmxri.jar!/" />
+      <root url="jar://$PROJECT_DIR$/openss7/src/java/oss_fm_spec-1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/openss7/src/java/jsip_api_v1.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/openss7/src/java/jmxremote.jar!/" />
+      <root url="jar://$PROJECT_DIR$/openss7/src/java/slee.jar!/" />
+      <root url="jar://$PROJECT_DIR$/openss7/src/java/JainInapApi1.0src.jar!/" />
+      <root url="jar://$PROJECT_DIR$/openss7/src/java/jmxremote_optional.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

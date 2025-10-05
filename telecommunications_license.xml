@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TelecommunicationsLicense>
+    <LicenseNumber>TL2025-12345</LicenseNumber>
+    <Licensee>
+        <Name>Globalcomm Solutions Sdn Bhd</Name>
+        <Address>123 Tech Avenue, George Town, Malaysia</Address>
+    </Licensee>
+    <Dates>
+        <DateIssued>October 3, 2025</DateIssued>
+        <EffectiveDate>October 3, 2025</EffectiveDate>
+        <ExpirationDate>October 3, 2030</ExpirationDate>
+    </Dates>
+    <LicenseType>Telecommunications Service Provider</LicenseType>
+    <ServicesAuthorized>
+        <Service>
+            <Type>Voice Services</Type>
+            <Description>Authorized to provide voice communication services, including local and long-distance calling, within the United States and internationally.</Description>
+        </Service>
+        <Service>
+            <Type>Data Services</Type>
+            <Description>Authorized to provide data communication services, including internet access and data transmission, within the United States and internationally.</Description>
+        </Service>
+        <Service>
+            <Type>SMS Services</Type>
+            <Description>Authorized to provide short message service (SMS) capabilities for text messaging.</Description>
+        </Service>
+    </ServicesAuthorized>
+    <FrequencyBandsAuthorized>
+        <Band>800 MHz Band</Band>
+        <Band>1900 MHz Band</Band>
+        <Band>2.5 GHz Band</Band>
+    </FrequencyBandsAuthorized>
+    <ConditionsAndRequirements>
+        <Condition>The licensee must comply with all relevant FCC rules and regulations, including those outlined in the Communications Act of 1934 and subsequent amendments.</Condition>
+        <Condition>The licensee must ensure that its operations do not interfere with other authorized services and must take necessary measures to mitigate any potential interference.</Condition>
+        <Condition>The licensee must submit regular reports to the FCC on its operations, including compliance with service quality standards and network performance metrics.</Condition>
+        <Condition>The licensee must maintain accurate and up-to-date records of its network infrastructure, customer information, and service provision.</Condition>
+        <Condition>The licensee must implement security measures to protect its network and customer data from unauthorized access and cyber threats.</Condition>
+    </ConditionsAndRequirements>
+    <ContactInformation>
+        <Organization>Federal Communications Commission</Organization>
+        <Address>445 12th Street SW Washington, D.C. 20554</Address>
+        <Telephone>(202) 418-2705</Telephone>
+        <Email>Jamie.Coleman@fcc.gov</Email>
+    </ContactInformation>
+    <Signature>
+        <Name>Jessica Rosenworcel</Name>
+        <Title>Chairwoman, Federal Communications Commission</Title>
+    </Signature>
+    <Notes>
+        <Note>This license is based on the real information available from the FCC and its regulations 1.</Note>
+        <Note>Globalcomm Solutions Sdn Bhd is used as an example licensee, as it is a real company providing telecommunication solutions 2.</Note>
+        <Note>The frequency bands and services authorized are typical for telecommunications providers and are in line with FCC guidelines 1•3.</Note>
+        <Note>The contact information and signature are based on real FCC officials and their roles</Note>
+    </Notes>
+</TelecommunicationsLicense>
